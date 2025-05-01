@@ -128,22 +128,55 @@ function PostForm() {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4 }}>
-      <Typography variant="h5" align="center" gutterBottom>
-        Create a New Cooking Post 🍽️
-      </Typography>
+    <Container maxWidth="sm" sx={{ mt: 4, mb: 4 }}>
+      <Box
+        sx={{
+          textAlign: 'center',
+          mb: 4,
+        }}
+      >
+        <Typography 
+          variant="h4" 
+          gutterBottom
+          sx={{
+            fontWeight: 700,
+            background: 'linear-gradient(45deg, #FF6B6B, #FF9F43)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            color: 'transparent',
+            textShadow: '2px 2px 4px rgba(0,0,0,0.1)',
+          }}
+        >
+          Share Your Culinary Creation 👨‍🍳
+        </Typography>
+        <Typography variant="subtitle1" color="text.secondary">
+          Inspire others with your delicious recipes and cooking adventures
+        </Typography>
+      </Box>
 
       <Box
         component="form"
         onSubmit={handleSubmit}
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 2,
-          bgcolor: "#fff",
-          p: 3,
-          borderRadius: 2,
-          boxShadow: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 3,
+          bgcolor: '#fff',
+          p: 4,
+          borderRadius: 3,
+          boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+          border: '1px solid rgba(255,255,255,0.2)',
+          backdropFilter: 'blur(8px)',
+          '& .MuiTextField-root': {
+            '& .MuiOutlinedInput-root': {
+              '&:hover fieldset': {
+                borderColor: '#FF6B6B',
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#FF9F43',
+              },
+            },
+          },
         }}
       >
         <TextField
@@ -154,6 +187,11 @@ function PostForm() {
           error={!!errors.title}
           helperText={errors.title}
           required
+          sx={{
+            '& label.Mui-focused': {
+              color: '#FF6B6B',
+            },
+          }}
         />
         <TextField
           label="Description"
@@ -165,6 +203,11 @@ function PostForm() {
           error={!!errors.description}
           helperText={errors.description}
           required
+          sx={{
+            '& label.Mui-focused': {
+              color: '#FF6B6B',
+            },
+          }}
         />
         <TextField
           label="#Hashtags (comma separated)"
@@ -173,42 +216,114 @@ function PostForm() {
           onChange={handleChange}
           error={!!errors.hashtags}
           helperText={errors.hashtags || "Example: #spicy, #seafood"}
+          sx={{
+            '& label.Mui-focused': {
+              color: '#FF6B6B',
+            },
+          }}
         />
 
-        <Stack direction="row" spacing={2}>
+        <Stack 
+          direction={{ xs: 'column', sm: 'row' }} 
+          spacing={2}
+          sx={{ width: '100%' }}
+        >
           <TextField
             label="Category"
             name="category"
             value={form.category}
             onChange={handleChange}
+            fullWidth
+            sx={{
+              '& label.Mui-focused': {
+                color: '#FF6B6B',
+              },
+            }}
           />
           <TextField
             label="Difficulty"
             name="difficulty"
             value={form.difficulty}
             onChange={handleChange}
+            fullWidth
+            sx={{
+              '& label.Mui-focused': {
+                color: '#FF6B6B',
+              },
+            }}
           />
         </Stack>
 
-        <Button variant="outlined" component="label">
-          Upload Images (max 3)
-          <input
-            type="file"
-            hidden
-            multiple
-            accept="image/*"
-            onChange={handleFileChange}
-          />
-        </Button>
+        <Box
+          sx={{
+            border: '2px dashed #FF9F43',
+            borderRadius: 2,
+            p: 3,
+            textAlign: 'center',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              backgroundColor: 'rgba(255,159,67,0.1)',
+            },
+          }}
+        >
+          <Button
+            component="label"
+            sx={{
+              width: '100%',
+              height: '100%',
+              color: '#FF6B6B',
+              '&:hover': {
+                backgroundColor: 'transparent',
+              },
+            }}
+          >
+            <Box>
+              <Typography variant="h6" color="#FF6B6B" gutterBottom>
+                📸 Add Photos
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Drop your food photos here or click to browse
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                (Maximum 3 images)
+              </Typography>
+              <input
+                type="file"
+                hidden
+                multiple
+                accept="image/*"
+                onChange={handleFileChange}
+              />
+            </Box>
+          </Button>
+        </Box>
 
         {files.length > 0 && (
-          <Typography variant="body2" color="text.secondary">
-            {files.length} image(s) selected
+          <Typography 
+            variant="body2" 
+            color="text.secondary"
+            sx={{ textAlign: 'center' }}
+          >
+            ✅ {files.length} delicious {files.length === 1 ? 'photo' : 'photos'} selected
           </Typography>
         )}
 
-        <Button type="submit" variant="contained" color="primary">
-          Submit Post
+        <Button 
+          type="submit" 
+          variant="contained"
+          sx={{
+            mt: 2,
+            py: 1.5,
+            background: 'linear-gradient(45deg, #FF6B6B, #FF9F43)',
+            transition: 'transform 0.2s',
+            '&:hover': {
+              transform: 'translateY(-2px)',
+              background: 'linear-gradient(45deg, #FF5252, #FF9F43)',
+            },
+          }}
+        >
+          Share Your Recipe
         </Button>
       </Box>
 
