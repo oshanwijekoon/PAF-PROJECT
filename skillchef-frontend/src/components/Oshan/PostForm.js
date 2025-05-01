@@ -10,7 +10,13 @@ import {
   Snackbar,
   Alert,
   MenuItem,
+  Paper,
+  Chip,
+  IconButton,
 } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
+import ImageIcon from '@mui/icons-material/Image';
+import RestaurantIcon from '@mui/icons-material/Restaurant';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -61,6 +67,8 @@ function PostForm() {
     setErrors({ ...errors, [e.target.name]: "" }); // Clear error on change
   };
 
+  const [previewUrls, setPreviewUrls] = useState([]);
+
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
     if (selectedFiles.length > 3) {
@@ -86,6 +94,26 @@ function PostForm() {
     }
 
     setFiles(validImages);
+    
+    // Create preview URLs
+    const urls = validImages.map(file => URL.createObjectURL(file));
+    setPreviewUrls(urls);
+  };
+
+  const removeImage = (index) => {
+    setFiles(files.filter((_, i) => i !== index));
+    setPreviewUrls(previewUrls.filter((_, i) => i !== index));
+  };
+
+  const addHashtag = (tag) => {
+    if (!tag.startsWith('#')) tag = '#' + tag;
+    const currentTags = form.hashtags ? form.hashtags.split(',').map(t => t.trim()) : [];
+    if (!currentTags.includes(tag)) {
+      setForm({
+        ...form,
+        hashtags: [...currentTags, tag].join(', ')
+      });
+    }
   };
 
   const validateForm = () => {
@@ -151,218 +179,271 @@ function PostForm() {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4, mb: 4 }}>
-      <Box
+    <Container maxWidth="md" sx={{ py: 6 }}>
+      <Paper
+        elevation={0}
         sx={{
-          textAlign: 'center',
-          mb: 4,
-        }}
-      >
-        <Typography 
-          variant="h4" 
-          gutterBottom
-          sx={{
-            fontWeight: 700,
-            background: 'linear-gradient(45deg, #FF6B6B, #FF9F43)',
-            backgroundClip: 'text',
-            WebkitBackgroundClip: 'text',
-            color: 'transparent',
-            textShadow: '2px 2px 4px rgba(0,0,0,0.1)',
-          }}
-        >
-          Share Your Culinary Creation 👨‍🍳
-        </Typography>
-        <Typography variant="subtitle1" color="text.secondary">
-          Inspire others with your delicious recipes and cooking adventures
-        </Typography>
-      </Box>
-
-      <Box
-        component="form"
-        onSubmit={handleSubmit}
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 3,
-          bgcolor: '#fff',
           p: 4,
-          borderRadius: 3,
-          boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-          border: '1px solid rgba(255,255,255,0.2)',
-          backdropFilter: 'blur(8px)',
-          '& .MuiTextField-root': {
-            '& .MuiOutlinedInput-root': {
-              '&:hover fieldset': {
-                borderColor: '#FF6B6B',
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: '#FF9F43',
-              },
-            },
-          },
+          borderRadius: 4,
+          background: 'linear-gradient(145deg, #ffffff, #f5f5f5)',
+          boxShadow: '20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff',
         }}
       >
-        <TextField
-          label="Title"
-          name="title"
-          value={form.title}
-          onChange={handleChange}
-          error={!!errors.title}
-          helperText={errors.title}
-          required
-          sx={{
-            '& label.Mui-focused': {
-              color: '#FF6B6B',
-            },
-          }}
-        />
-        <TextField
-          label="Description"
-          name="description"
-          multiline
-          rows={4}
-          value={form.description}
-          onChange={handleChange}
-          error={!!errors.description}
-          helperText={errors.description}
-          required
-          sx={{
-            '& label.Mui-focused': {
-              color: '#FF6B6B',
-            },
-          }}
-        />
-        <TextField
-          label="#Hashtags (comma separated)"
-          name="hashtags"
-          value={form.hashtags}
-          onChange={handleChange}
-          error={!!errors.hashtags}
-          helperText={errors.hashtags || "Example: #spicy, #seafood"}
-          sx={{
-            '& label.Mui-focused': {
-              color: '#FF6B6B',
-            },
-          }}
-        />
-
-        <Stack 
-          direction={{ xs: 'column', sm: 'row' }} 
-          spacing={2}
-          sx={{ width: '100%' }}
-        >
-          <TextField
-            select
-            label="Category"
-            name="category"
-            value={form.category}
-            onChange={handleChange}
-            fullWidth
+        <Box sx={{ textAlign: 'center', mb: 6 }}>
+          <RestaurantIcon sx={{ fontSize: 40, color: '#FF6B6B', mb: 2 }} />
+          <Typography 
+            variant="h3" 
+            gutterBottom
             sx={{
-              '& label.Mui-focused': {
-                color: '#FF6B6B',
-              },
+              fontWeight: 800,
+              background: 'linear-gradient(45deg, #FF6B6B, #FF9F43)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              color: 'transparent',
+              letterSpacing: '-0.5px',
             }}
           >
-            {categories.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            select
-            label="Difficulty"
-            name="difficulty"
-            value={form.difficulty}
-            onChange={handleChange}
-            fullWidth
-            sx={{
-              '& label.Mui-focused': {
-                color: '#FF6B6B',
-              },
-            }}
-          >
-            {difficultyLevels.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Stack>
-
-        <Box
-          sx={{
-            border: '2px dashed #FF9F43',
-            borderRadius: 2,
-            p: 3,
-            textAlign: 'center',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            '&:hover': {
-              backgroundColor: 'rgba(255,159,67,0.1)',
-            },
-          }}
-        >
-          <Button
-            component="label"
-            sx={{
-              width: '100%',
-              height: '100%',
-              color: '#FF6B6B',
-              '&:hover': {
-                backgroundColor: 'transparent',
-              },
-            }}
-          >
-            <Box>
-              <Typography variant="h6" color="#FF6B6B" gutterBottom>
-                📸 Add Photos
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Drop your food photos here or click to browse
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                (Maximum 3 images)
-              </Typography>
-              <input
-                type="file"
-                hidden
-                multiple
-                accept="image/*"
-                onChange={handleFileChange}
-              />
-            </Box>
-          </Button>
+            Create Your Recipe
+          </Typography>
+          <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 400 }}>
+            Share your culinary masterpiece with the world 🌎
+          </Typography>
         </Box>
 
-        {files.length > 0 && (
-          <Typography 
-            variant="body2" 
-            color="text.secondary"
-            sx={{ textAlign: 'center' }}
-          >
-            ✅ {files.length} delicious {files.length === 1 ? 'photo' : 'photos'} selected
-          </Typography>
-        )}
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 4 }}>
+          <Stack spacing={4}>
+            <TextField
+              label="Recipe Title"
+              name="title"
+              value={form.title}
+              onChange={handleChange}
+              error={!!errors.title}
+              helperText={errors.title}
+              required
+              variant="filled"
+              sx={{
+                '& .MuiFilledInput-root': {
+                  borderRadius: 2,
+                  bgcolor: 'rgba(255,107,107,0.05)',
+                  '&:hover': {
+                    bgcolor: 'rgba(255,107,107,0.1)',
+                  },
+                }
+              }}
+            />
 
-        <Button 
-          type="submit" 
-          variant="contained"
-          sx={{
-            mt: 2,
-            py: 1.5,
-            background: 'linear-gradient(45deg, #FF6B6B, #FF9F43)',
-            transition: 'transform 0.2s',
-            '&:hover': {
-              transform: 'translateY(-2px)',
-              background: 'linear-gradient(45deg, #FF5252, #FF9F43)',
-            },
-          }}
-        >
-          Share Your Recipe
-        </Button>
-      </Box>
+            <TextField
+              label="Recipe Description"
+              name="description"
+              multiline
+              rows={4}
+              value={form.description}
+              onChange={handleChange}
+              error={!!errors.description}
+              helperText={errors.description}
+              required
+              variant="filled"
+              sx={{
+                '& .MuiFilledInput-root': {
+                  borderRadius: 2,
+                  bgcolor: 'rgba(255,107,107,0.05)',
+                }
+              }}
+            />
+
+            {/* Image Preview Section */}
+            <Box>
+              <Typography variant="h6" gutterBottom sx={{ color: '#FF6B6B' }}>
+                Recipe Photos
+              </Typography>
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+                  gap: 2,
+                  mb: 2,
+                }}
+              >
+                {previewUrls.map((url, index) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      position: 'relative',
+                      paddingTop: '100%',
+                      borderRadius: 2,
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <Box
+                      component="img"
+                      src={url}
+                      sx={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                      }}
+                    />
+                    <IconButton
+                      onClick={() => removeImage(index)}
+                      sx={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8,
+                        bgcolor: 'rgba(0,0,0,0.5)',
+                        color: 'white',
+                        '&:hover': { bgcolor: 'rgba(0,0,0,0.7)' },
+                      }}
+                      size="small"
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+                ))}
+                {previewUrls.length < 3 && (
+                  <Button
+                    component="label"
+                    sx={{
+                      height: 0,
+                      paddingTop: '100%',
+                      position: 'relative',
+                      border: '2px dashed #FF9F43',
+                      borderRadius: 2,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <ImageIcon sx={{ color: '#FF9F43', mb: 1 }} />
+                      <Typography variant="caption" color="text.secondary">
+                        Add Photo
+                      </Typography>
+                    </Box>
+                    <input
+                      type="file"
+                      hidden
+                      multiple
+                      accept="image/*"
+                      onChange={handleFileChange}
+                    />
+                  </Button>
+                )}
+              </Box>
+            </Box>
+
+            {/* Category and Difficulty */}
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+              <TextField
+                select
+                label="Category"
+                name="category"
+                value={form.category}
+                onChange={handleChange}
+                fullWidth
+                sx={{
+                  '& label.Mui-focused': {
+                    color: '#FF6B6B',
+                  },
+                }}
+              >
+                {categories.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                select
+                label="Difficulty"
+                name="difficulty"
+                value={form.difficulty}
+                onChange={handleChange}
+                fullWidth
+                sx={{
+                  '& label.Mui-focused': {
+                    color: '#FF6B6B',
+                  },
+                }}
+              >
+                {difficultyLevels.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Stack>
+
+            {/* Hashtags Section */}
+            <Box>
+              <Typography variant="h6" gutterBottom sx={{ color: '#FF6B6B' }}>
+                Recipe Tags
+              </Typography>
+              <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mb: 2 }}>
+                {form.hashtags.split(',').map((tag, index) => (
+                  tag.trim() && (
+                    <Chip
+                      key={index}
+                      label={tag.trim()}
+                      sx={{
+                        bgcolor: 'rgba(255,107,107,0.1)',
+                        color: '#FF6B6B',
+                        m: 0.5,
+                      }}
+                    />
+                  )
+                ))}
+              </Stack>
+              <TextField
+                fullWidth
+                label="Add Tags"
+                name="hashtags"
+                value={form.hashtags}
+                onChange={handleChange}
+                error={!!errors.hashtags}
+                helperText={errors.hashtags || "Separate tags with commas (e.g., #italian, #pasta)"}
+                variant="filled"
+                sx={{
+                  '& .MuiFilledInput-root': {
+                    borderRadius: 2,
+                    bgcolor: 'rgba(255,107,107,0.05)',
+                  }
+                }}
+              />
+            </Box>
+
+            <Button
+              type="submit"
+              variant="contained"
+              size="large"
+              sx={{
+                py: 2,
+                borderRadius: 3,
+                background: 'linear-gradient(45deg, #FF6B6B, #FF9F43)',
+                boxShadow: '0 4px 15px rgba(255,107,107,0.3)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 6px 20px rgba(255,107,107,0.4)',
+                },
+              }}
+            >
+              Share Recipe
+            </Button>
+          </Stack>
+        </Box>
+      </Paper>
 
       <Snackbar
         open={toast.open}
