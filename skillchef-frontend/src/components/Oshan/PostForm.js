@@ -9,6 +9,7 @@ import {
   Stack,
   Snackbar,
   Alert,
+  MenuItem,
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -32,6 +33,28 @@ function PostForm() {
     message: "",
     severity: "success",
   });
+
+  const categories = [
+    "Main Course",
+    "Appetizer",
+    "Dessert",
+    "Breakfast",
+    "Lunch",
+    "Dinner",
+    "Snack",
+    "Beverage",
+    "Soup",
+    "Salad",
+    "Baked Goods",
+  ];
+
+  const difficultyLevels = [
+    "Beginner",
+    "Easy",
+    "Intermediate",
+    "Advanced",
+    "Expert"
+  ];
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -229,6 +252,7 @@ function PostForm() {
           sx={{ width: '100%' }}
         >
           <TextField
+            select
             label="Category"
             name="category"
             value={form.category}
@@ -239,8 +263,15 @@ function PostForm() {
                 color: '#FF6B6B',
               },
             }}
-          />
+          >
+            {categories.map((option) => (
+              <MenuItem key={option} value={option}>
+                {option}
+              </MenuItem>
+            ))}
+          </TextField>
           <TextField
+            select
             label="Difficulty"
             name="difficulty"
             value={form.difficulty}
@@ -251,7 +282,13 @@ function PostForm() {
                 color: '#FF6B6B',
               },
             }}
-          />
+          >
+            {difficultyLevels.map((option) => (
+              <MenuItem key={option} value={option}>
+                {option}
+              </MenuItem>
+            ))}
+          </TextField>
         </Stack>
 
         <Box
