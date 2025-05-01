@@ -10,15 +10,25 @@ import {
   Button,
   Stack,
   Paper,
+  Fade,
+  Chip,
+  IconButton,
+  useTheme,
 } from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import WhatshotIcon from "@mui/icons-material/Whatshot";
+import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
 
 function Home() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const theme = useTheme();
   const [posts, setPosts] = useState([]);
   const [suggestedUsers, setSuggestedUsers] = useState([]);
+  const [trendingTags, setTrendingTags] = useState(['#ChefLife', '#Cooking101', '#FoodArt', '#RecipeShare']);
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
   useEffect(() => {
     axios.get("http://localhost:8080/api/posts").then((res) => {
@@ -54,65 +64,156 @@ function Home() {
 
   return (
     <Container sx={{ mt: 4, ml: 30 }}>
-      <Grid container spacing={3}>
-        {/* Left Side - Posts */}
-        <Grid item xs={12} md={8}>
-          <Typography variant="h4" gutterBottom>
-            SkillChef Feed 🍳
+      {/* Hero Section */}
+      <Fade in timeout={1000}>
+        <Paper
+          elevation={0}
+          sx={{
+            p: 4,
+            mb: 4,
+            borderRadius: 4,
+            background: 'linear-gradient(135deg, #FF9966 0%, #FF5E62 100%)',
+            color: 'white',
+          }}
+        >
+          <Typography variant="h3" fontWeight="bold" gutterBottom>
+            Welcome to SkillChef 👨‍🍳
           </Typography>
-          {posts.map((post) => (
-            <PostCard key={post.id} post={post} onDelete={handlePostDelete} />
-          ))}
+          <Typography variant="h6" sx={{ mb: 3, opacity: 0.9 }}>
+            Discover amazing recipes, share your culinary journey, and connect with fellow food lovers
+          </Typography>
+          <Button
+            variant="contained"
+            color="secondary"
+            size="large"
+            onClick={() => navigate('/create')}
+            sx={{ fontWeight: 'bold' }}
+          >
+            Share Your Recipe
+          </Button>
+        </Paper>
+      </Fade>
+
+      {/* Categories */}
+      <Box sx={{ mb: 4, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+        {['all', 'trending', 'desserts', 'main course', 'beverages'].map(category => (
+          <Chip
+            key={category}
+            label={category.charAt(0).toUpperCase() + category.slice(1)}
+            onClick={() => setSelectedCategory(category)}
+            color={selectedCategory === category ? "primary" : "default"}
+            icon={category === 'trending' ? <WhatshotIcon /> : null}
+            sx={{ px: 1 }}
+          />
+        ))}
+      </Box>
+
+      <Grid container spacing={3}>
+        {/* Main Content */}
+        <Grid item xs={12} md={8}>
+          {/* Trending Topics */}
+          <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+              <LocalFireDepartmentIcon color="error" sx={{ mr: 1 }} />
+              <Typography variant="h6">Trending Topics</Typography>
+            </Box>
+            <Stack direction="row" spacing={1} flexWrap="wrap">
+              {trendingTags.map(tag => (
+                <Chip
+                  key={tag}
+                  label={tag}
+                  size="small"
+                  clickable
+                  sx={{ m: 0.5 }}
+                />
+              ))}
+            </Stack>
+          </Paper>
+
+          {/* Posts Feed */}
+          <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
+            <TrendingUpIcon sx={{ mr: 1 }} />
+            Latest Recipes
+          </Typography>
+          
+          <Stack spacing={3}>
+            {posts.map((post) => (
+              <Fade in key={post.id} timeout={500}>
+                <Box>
+                  <PostCard post={post} onDelete={handlePostDelete} />
+                </Box>
+              </Fade>
+            ))}
+          </Stack>
         </Grid>
 
-        {/* Right Side - Suggested Users (Sticky) */}
+        {/* Suggested Users Section - Modern Style */}
         <Grid item xs={12} md={4}>
           <Paper
-            elevation={3}
+            elevation={2}
             sx={{
-              p: 2,
+              p: 3,
               position: "sticky",
               top: 90,
+              borderRadius: 3,
               maxHeight: "calc(100vh - 100px)",
               overflow: "auto",
               ml: 11,
+              background: theme.palette.background.paper,
             }}
           >
-            <Typography variant="h6" gutterBottom>
-              Suggested Followers
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
+              Chefs to Follow
             </Typography>
             <Stack spacing={2}>
               {suggestedUsers.map((u) => (
-                <Box
+                <Paper
                   key={u.id}
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="space-between"
+                  elevation={0}
+                  sx={{
+                    p: 1.5,
+                    borderRadius: 2,
+                    '&:hover': {
+                      bgcolor: 'rgba(0,0,0,0.04)',
+                    },
+                  }}
                 >
                   <Box
                     display="flex"
                     alignItems="center"
-                    gap={1}
-                    sx={{ cursor: "pointer", mr: 3 }}
-                    onClick={() => navigate(`/account/${u.id}`)}
+                    justifyContent="space-between"
                   >
-                    <Avatar src={`http://localhost:8080${u.profilePic}`} />
-                    <Typography>{u.username}</Typography>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      gap={1.5}
+                      sx={{ cursor: "pointer" }}
+                      onClick={() => navigate(`/account/${u.id}`)}
+                    >
+                      <Avatar
+                        src={`http://localhost:8080${u.profilePic}`}
+                        sx={{ width: 40, height: 40 }}
+                      />
+                      <Box>
+                        <Typography variant="subtitle2" fontWeight="bold">
+                          {u.username}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {u.bio?.slice(0, 30)}...
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      onClick={() => handleFollow(u.id)}
+                      sx={{ borderRadius: 5 }}
+                    >
+                      Follow
+                    </Button>
                   </Box>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    onClick={() => handleFollow(u.id)}
-                  >
-                    Follow
-                  </Button>
-                </Box>
+                </Paper>
               ))}
-              {suggestedUsers.length === 0 && (
-                <Typography color="text.secondary" fontSize="14px">
-                  No suggestions right now.
-                </Typography>
-              )}
             </Stack>
           </Paper>
         </Grid>
