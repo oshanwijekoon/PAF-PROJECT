@@ -20,6 +20,8 @@ import { useNavigate } from "react-router-dom";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
 import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import ShareIcon from '@mui/icons-material/Share';
 
 function Home() {
   const { user } = useContext(AuthContext);
@@ -124,27 +126,161 @@ function Home() {
                   label={tag}
                   size="small"
                   clickable
-                  sx={{ m: 0.5 }}
+                  sx={{
+                    m: 0.5,
+                    transition: 'all 0.2s ease',
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
+                      bgcolor: 'primary.light'
+                    }
+                  }}
                 />
               ))}
             </Stack>
           </Paper>
 
-          {/* Posts Feed */}
-          <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
-            <TrendingUpIcon sx={{ mr: 1 }} />
+          {/* Posts Grid */}
+          <Typography 
+            variant="h5" 
+            gutterBottom 
+            sx={{ 
+              display: 'flex', 
+              alignItems: 'center',
+              background: 'linear-gradient(45deg, #FF6B6B 30%, #FF8E53 90%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              fontWeight: 600,
+              mb: 4
+            }}>
+            <TrendingUpIcon sx={{ mr: 1, color: '#FF6B6B' }} />
             Latest Recipes
           </Typography>
-          
-          <Stack spacing={3}>
-            {posts.map((post) => (
-              <Fade in key={post.id} timeout={500}>
-                <Box>
-                  <PostCard post={post} onDelete={handlePostDelete} />
-                </Box>
-              </Fade>
+
+          <Grid container spacing={3}>
+            {posts.map((post, index) => (
+              <Grid item xs={12} sm={6} key={post.id}>
+                <Fade in timeout={(index + 1) * 300}>
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      position: 'relative',
+                      borderRadius: 3,
+                      overflow: 'hidden',
+                      transition: 'all 0.3s ease',
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      '&:hover': {
+                        transform: 'translateY(-8px)',
+                        boxShadow: '0 12px 20px rgba(0,0,0,0.1)'
+                      }
+                    }}
+                  >
+                    {/* Post Image with Gradient Overlay */}
+                    {post.mediaUrls?.[0] && (
+                      <Box sx={{ position: 'relative', paddingTop: '56.25%' }}>
+                        <Box
+                          component="img"
+                          src={`http://localhost:8080${post.mediaUrls[0]}`}
+                          alt={post.title}
+                          sx={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover'
+                          }}
+                        />
+                        <Box
+                          sx={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.7) 100%)',
+                          }}
+                        />
+                      </Box>
+                    )}
+
+                    <Box sx={{ p: 3 }}>
+                      {/* Author Info */}
+                      <Stack direction="row" spacing={1} alignItems="center" mb={2}>
+                        <Avatar
+                          src={`http://localhost:8080${post.userInfo?.profilePic}`}
+                          sx={{ width: 32, height: 32 }}
+                        />
+                        <Typography variant="subtitle2" fontWeight={600}>
+                          {post.userInfo?.username}
+                        </Typography>
+                      </Stack>
+
+                      {/* Post Content */}
+                      <Typography variant="h6" gutterBottom>
+                        {post.title}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{
+                          mb: 2,
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden'
+                        }}
+                      >
+                        {post.description}
+                      </Typography>
+
+                      {/* Hashtags */}
+                      <Stack direction="row" spacing={1} flexWrap="wrap" mb={2}>
+                        {post.hashtags?.map((tag, idx) => (
+                          <Chip
+                            key={idx}
+                            label={`#${tag}`}
+                            size="small"
+                            sx={{
+                              m: 0.5,
+                              transition: 'all 0.2s ease',
+                              '&:hover': {
+                                bgcolor: 'primary.soft',
+                                transform: 'translateY(-2px)'
+                              }
+                            }}
+                          />
+                        ))}
+                      </Stack>
+
+                      {/* Action Buttons */}
+                      <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        <Button
+                          variant="contained"
+                          onClick={() => navigate(`/post/${post.id}`)}
+                          sx={{
+                            background: 'linear-gradient(45deg, #FF6B6B 30%, #FF8E53 90%)',
+                            color: 'white',
+                            transition: 'all 0.2s ease',
+                            '&:hover': {
+                              transform: 'translateY(-2px)',
+                              boxShadow: '0 4px 12px rgba(255,107,107,0.3)'
+                            }
+                          }}
+                        >
+                          View Recipe
+                        </Button>
+                        <Stack direction="row" spacing={1}>
+                          <IconButton size="small"><FavoriteBorderIcon /></IconButton>
+                          <IconButton size="small"><ShareIcon /></IconButton>
+                        </Stack>
+                      </Stack>
+                    </Box>
+                  </Paper>
+                </Fade>
+              </Grid>
             ))}
-          </Stack>
+          </Grid>
         </Grid>
 
         {/* Suggested Users Section - Modern Style */}
