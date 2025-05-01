@@ -6,8 +6,8 @@ import {
   deleteProgress,
 } from "../services/progressService";
 
-import ProgressForm from "../components/tashini/ProgressForm";
-import ProgressList from "../components/tashini/ProgressList";
+import ProgressForm from "../components/Oshan/ProgressForm";
+import ProgressList from "../components/Oshan/ProgressList";
 import { Container, Typography, Snackbar, Alert } from "@mui/material";
 import { AuthContext } from "../context/AuthContext"; // ✅ Import AuthContext
 

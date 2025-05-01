@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
-import PostCard from "../components/hashan/PostCard";
+import PostCard from "../components/Oshan/PostCard";
 import {
   Container,
   Typography,

@@ -17,7 +17,7 @@ import {
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import FollowersModal from "../components/hashan/FollowersModal";
+import FollowersModal from "../components/Oshan/FollowersModal";
 import UserProgressList from "../components/tabs/UserProgressList";
 import UserLearningPlans from "../components/tabs/UserLearningPlans";
 

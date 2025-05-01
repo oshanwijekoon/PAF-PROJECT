@@ -5,7 +5,7 @@ import {
   deletePlan,
   updatePlan,
 } from "../services/learningPlanService";
-import LearningPlanForm from "../components/nishitha/LearningPlanForm";
+import LearningPlanForm from "../components/Binuri/LearningPlanForm";
 import { AuthContext } from "../context/AuthContext"; // ✅ Import AuthContext
 
 import {

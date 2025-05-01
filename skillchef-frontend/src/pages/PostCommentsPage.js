@@ -8,8 +8,8 @@ import {
   updateComment,
   deleteComment,
 } from "../../services/commentService";
-import CommentForm from "../components/nishan/CommentForm";
-import CommentList from "../components/nishan/CommentList";
+import CommentForm from "../components/Senura/CommentForm";
+import CommentList from "../components/Senura/CommentList";
 
 const PostCommentsPage = () => {
   const { user } = useContext(AuthContext);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import PostCard from "../components/hashan/PostCard";
-import CommentSection from "../components/nishan/CommentSection"; // 👈 Add this
+import PostCard from "../components/Oshan/PostCard";
+import CommentSection from "../components/Senura/CommentSection"; // 👈 Add this
 import { Container, CircularProgress, Box } from "@mui/material";
 import axios from "axios";
 
