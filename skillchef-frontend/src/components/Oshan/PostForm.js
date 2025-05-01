@@ -203,7 +203,7 @@ function PostForm() {
               letterSpacing: '-0.5px',
             }}
           >
-            Create Your Recipe
+            Create Your Post
           </Typography>
           <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 400 }}>
             Share your culinary masterpiece with the world 🌎
