@@ -65,23 +65,24 @@ function Home() {
   };
 
   return (
-    <Container sx={{ mt: 4, ml: 30 }}>
+    <Container maxWidth="xl" sx={{ mt: 4, px: { xs: 2, md: 4 } }}>
       {/* Hero Section */}
       <Fade in timeout={1000}>
         <Paper
           elevation={0}
           sx={{
-            p: 4,
+            p: { xs: 3, md: 4 },
             mb: 4,
             borderRadius: 4,
             background: 'linear-gradient(135deg, #FF9966 0%, #FF5E62 100%)',
             color: 'white',
+            textAlign: 'center'
           }}
         >
           <Typography variant="h3" fontWeight="bold" gutterBottom>
             Welcome to SkillChef 👨‍🍳
           </Typography>
-          <Typography variant="h6" sx={{ mb: 3, opacity: 0.9 }}>
+          <Typography variant="h6" sx={{ mb: 3, opacity: 0.9, maxWidth: '800px', mx: 'auto' }}>
             Discover amazing recipes, share your culinary journey, and connect with fellow food lovers
           </Typography>
           <Button
@@ -89,35 +90,59 @@ function Home() {
             color="secondary"
             size="large"
             onClick={() => navigate('/create')}
-            sx={{ fontWeight: 'bold' }}
+            sx={{
+              fontWeight: 'bold',
+              px: 4,
+              py: 1.5,
+              borderRadius: 3,
+              textTransform: 'none'
+            }}
           >
             Share Your Recipe
           </Button>
         </Paper>
       </Fade>
 
-      {/* Categories */}
-      <Box sx={{ mb: 4, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-        {['all', 'trending', 'desserts', 'main course', 'beverages'].map(category => (
-          <Chip
-            key={category}
-            label={category.charAt(0).toUpperCase() + category.slice(1)}
-            onClick={() => setSelectedCategory(category)}
-            color={selectedCategory === category ? "primary" : "default"}
-            icon={category === 'trending' ? <WhatshotIcon /> : null}
-            sx={{ px: 1 }}
-          />
-        ))}
-      </Box>
-
-      <Grid container spacing={3}>
-        {/* Main Content */}
+      {/* Main Content Layout */}
+      <Grid container spacing={4}>
+        {/* Left Column - Main Content */}
         <Grid item xs={12} md={8}>
+          {/* Categories */}
+          <Box sx={{ mb: 4, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+            {['all', 'trending', 'desserts', 'main course', 'beverages'].map(category => (
+              <Chip
+                key={category}
+                label={category.charAt(0).toUpperCase() + category.slice(1)}
+                onClick={() => setSelectedCategory(category)}
+                color={selectedCategory === category ? "primary" : "default"}
+                icon={category === 'trending' ? <WhatshotIcon /> : null}
+                sx={{
+                  px: 2,
+                  py: 2.5,
+                  borderRadius: 2,
+                  '&:hover': {
+                    transform: 'translateY(-2px)',
+                    transition: 'transform 0.2s'
+                  }
+                }}
+              />
+            ))}
+          </Box>
+
           {/* Trending Topics */}
-          <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: 2 }}>
+          <Paper 
+            elevation={1} 
+            sx={{ 
+              p: 3, 
+              mb: 4, 
+              borderRadius: 3,
+              border: '1px solid',
+              borderColor: 'divider'
+            }}
+          >
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <LocalFireDepartmentIcon color="error" sx={{ mr: 1 }} />
-              <Typography variant="h6">Trending Topics</Typography>
+              <Typography variant="h6" fontWeight="bold">Trending Topics</Typography>
             </Box>
             <Stack direction="row" spacing={1} flexWrap="wrap">
               {trendingTags.map(tag => (
@@ -128,6 +153,7 @@ function Home() {
                   clickable
                   sx={{
                     m: 0.5,
+                    borderRadius: 2,
                     transition: 'all 0.2s ease',
                     '&:hover': {
                       transform: 'translateY(-2px)',
@@ -146,12 +172,10 @@ function Home() {
             sx={{ 
               display: 'flex', 
               alignItems: 'center',
-              background: 'linear-gradient(45deg, #FF6B6B 30%, #FF8E53 90%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
               fontWeight: 600,
-              mb: 4
-            }}>
+              mb: 3
+            }}
+          >
             <TrendingUpIcon sx={{ mr: 1, color: '#FF6B6B' }} />
             Latest Recipes
           </Typography>
@@ -169,6 +193,9 @@ function Home() {
                       transition: 'all 0.3s ease',
                       border: '1px solid',
                       borderColor: 'divider',
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
                       '&:hover': {
                         transform: 'translateY(-8px)',
                         boxShadow: '0 12px 20px rgba(0,0,0,0.1)'
@@ -204,7 +231,7 @@ function Home() {
                       </Box>
                     )}
 
-                    <Box sx={{ p: 3 }}>
+                    <Box sx={{ p: 3, flexGrow: 1 }}>
                       {/* Author Info */}
                       <Stack direction="row" spacing={1} alignItems="center" mb={2}>
                         <Avatar
@@ -252,8 +279,10 @@ function Home() {
                           />
                         ))}
                       </Stack>
+                    </Box>
 
-                      {/* Action Buttons */}
+                    {/* Action Buttons */}
+                    <Box sx={{ p: 3 }}>
                       <Stack direction="row" justifyContent="space-between" alignItems="center">
                         <Button
                           variant="contained"
@@ -283,75 +312,74 @@ function Home() {
           </Grid>
         </Grid>
 
-        {/* Suggested Users Section - Modern Style */}
+        {/* Right Column - Sidebar */}
         <Grid item xs={12} md={4}>
-          <Paper
-            elevation={2}
-            sx={{
-              p: 3,
-              position: "sticky",
-              top: 90,
-              borderRadius: 3,
-              maxHeight: "calc(100vh - 100px)",
-              overflow: "auto",
-              ml: 11,
-              background: theme.palette.background.paper,
-            }}
-          >
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
-              Chefs to Follow
-            </Typography>
-            <Stack spacing={2}>
-              {suggestedUsers.map((u) => (
-                <Paper
-                  key={u.id}
-                  elevation={0}
-                  sx={{
-                    p: 1.5,
-                    borderRadius: 2,
-                    '&:hover': {
-                      bgcolor: 'rgba(0,0,0,0.04)',
-                    },
-                  }}
-                >
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="space-between"
+          <Box sx={{ position: 'sticky', top: 90, width: '100%' }}>
+            <Paper
+              elevation={2}
+              sx={{
+                p: 3,
+                borderRadius: 3,
+                background: theme.palette.background.paper,
+                border: '1px solid',
+                borderColor: 'divider'
+              }}
+            >
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
+                Chefs to Follow
+              </Typography>
+              <Stack spacing={2}>
+                {suggestedUsers.map((u) => (
+                  <Paper
+                    key={u.id}
+                    elevation={0}
+                    sx={{
+                      p: 1.5,
+                      borderRadius: 2,
+                      '&:hover': {
+                        bgcolor: 'rgba(0,0,0,0.04)',
+                      },
+                    }}
                   >
                     <Box
                       display="flex"
                       alignItems="center"
-                      gap={1.5}
-                      sx={{ cursor: "pointer" }}
-                      onClick={() => navigate(`/account/${u.id}`)}
+                      justifyContent="space-between"
                     >
-                      <Avatar
-                        src={`http://localhost:8080${u.profilePic}`}
-                        sx={{ width: 40, height: 40 }}
-                      />
-                      <Box>
-                        <Typography variant="subtitle2" fontWeight="bold">
-                          {u.username}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {u.bio?.slice(0, 30)}...
-                        </Typography>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        gap={1.5}
+                        sx={{ cursor: "pointer" }}
+                        onClick={() => navigate(`/account/${u.id}`)}
+                      >
+                        <Avatar
+                          src={`http://localhost:8080${u.profilePic}`}
+                          sx={{ width: 40, height: 40 }}
+                        />
+                        <Box>
+                          <Typography variant="subtitle2" fontWeight="bold">
+                            {u.username}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {u.bio?.slice(0, 30)}...
+                          </Typography>
+                        </Box>
                       </Box>
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={() => handleFollow(u.id)}
+                        sx={{ borderRadius: 5 }}
+                      >
+                        Follow
+                      </Button>
                     </Box>
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      onClick={() => handleFollow(u.id)}
-                      sx={{ borderRadius: 5 }}
-                    >
-                      Follow
-                    </Button>
-                  </Box>
-                </Paper>
-              ))}
-            </Stack>
-          </Paper>
+                  </Paper>
+                ))}
+              </Stack>
+            </Paper>
+          </Box>
         </Grid>
       </Grid>
     </Container>
