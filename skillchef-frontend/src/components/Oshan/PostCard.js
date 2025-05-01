@@ -24,6 +24,12 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ShareIcon from "@mui/icons-material/Share";
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
+import SpeedDial from '@mui/material/SpeedDial';
+import SpeedDialIcon from '@mui/material/SpeedDialIcon';
+import SpeedDialAction from '@mui/material/SpeedDialAction';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
@@ -35,6 +41,17 @@ function PostCard({ post, onDelete }) {
   const [toastOpen, setToastOpen] = useState(false);
   const [postUser, setPostUser] = useState(null);
   const [shareToast, setShareToast] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  const [selectedReaction, setSelectedReaction] = useState(null);
+
+  const reactions = [
+    { icon: "❤️", name: "Love" },
+    { icon: "👍", name: "Like" },
+    { icon: "🔥", name: "Fire" },
+    { icon: "👨‍🍳", name: "Chef" },
+    { icon: "😋", name: "Yummy" },
+  ];
 
   useEffect(() => {
     if (post.userId) {
@@ -78,6 +95,15 @@ function PostCard({ post, onDelete }) {
     }
   };
 
+  const handleLike = () => {
+    setLiked(!liked);
+    setLikeCount(liked ? likeCount - 1 : likeCount + 1);
+  };
+
+  const handleReaction = (reaction) => {
+    setSelectedReaction(reaction);
+  };
+
   const imageUrl =
     post.mediaUrls?.length > 0
       ? `http://localhost:8080${post.mediaUrls[0]}`
@@ -90,7 +116,11 @@ function PostCard({ post, onDelete }) {
           maxWidth: 500,
           margin: "20px auto",
           borderRadius: 4,
-          boxShadow: 3,
+          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+          transition: "transform 0.2s ease-in-out",
+          "&:hover": {
+            transform: "translateY(-4px)",
+          },
         }}
       >
         {/* 🧑‍🍳 Top User Info Row */}
@@ -140,17 +170,90 @@ function PostCard({ post, onDelete }) {
 
         {/* 📷 Post Media */}
         {imageUrl && (
-          <CardMedia
-            component="img"
-            height="300"
-            image={imageUrl}
-            alt={post.title}
-            sx={{ objectFit: "cover", mt: 1 }}
-          />
+          <Box sx={{ position: 'relative' }}>
+            <CardMedia
+              component="img"
+              height="300"
+              image={imageUrl}
+              alt={post.title}
+              sx={{
+                objectFit: "cover",
+                mt: 1,
+              }}
+            />
+            <Box
+              sx={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                background: 'linear-gradient(transparent, rgba(0,0,0,0.7))',
+                padding: 2,
+              }}
+            >
+              <Typography variant="h6" color="white">
+                {post.title}
+              </Typography>
+            </Box>
+          </Box>
         )}
 
         <CardContent>
-          <Typography variant="h6">{post.title}</Typography>
+          {/* Reactions and Likes Section */}
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            mb: 2 
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <IconButton 
+                onClick={handleLike}
+                sx={{ 
+                  color: liked ? 'red' : 'inherit',
+                  transform: liked ? 'scale(1.1)' : 'scale(1)',
+                  transition: 'all 0.2s ease-in-out',
+                }}
+              >
+                {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+              </IconButton>
+              <Typography variant="body2">
+                {likeCount} {likeCount === 1 ? 'like' : 'likes'}
+              </Typography>
+            </Box>
+
+            {/* Reaction Speed Dial */}
+            <SpeedDial
+              ariaLabel="Reactions"
+              icon={<EmojiEmotionsIcon />}
+              direction="left"
+              sx={{ 
+                '& .MuiSpeedDial-fab': { 
+                  width: 40, 
+                  height: 40,
+                  backgroundColor: 'primary.light' 
+                } 
+              }}
+            >
+              {reactions.map((reaction) => (
+                <SpeedDialAction
+                  key={reaction.name}
+                  icon={<Typography>{reaction.icon}</Typography>}
+                  tooltipTitle={reaction.name}
+                  onClick={() => handleReaction(reaction)}
+                />
+              ))}
+            </SpeedDial>
+          </Box>
+
+          {selectedReaction && (
+            <Chip
+              label={`${selectedReaction.icon} ${selectedReaction.name}`}
+              variant="outlined"
+              size="small"
+              sx={{ mb: 2 }}
+            />
+          )}
 
           {post.difficulty && (
             <Chip
@@ -161,7 +264,15 @@ function PostCard({ post, onDelete }) {
             />
           )}
 
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          <Typography 
+            variant="body2" 
+            color="text.secondary" 
+            sx={{ 
+              mt: 1,
+              fontSize: '0.95rem',
+              lineHeight: 1.6 
+            }}
+          >
             {post.description}
           </Typography>
 
@@ -177,12 +288,19 @@ function PostCard({ post, onDelete }) {
           </Box>
         </CardContent>
         <Button
-          variant="text"
-          size="small"
+          variant="contained"
+          size="medium"
           onClick={() => navigate(`/post/${post.id}`)}
-          sx={{ mt: 2 }}
+          sx={{
+            m: 2,
+            borderRadius: 2,
+            textTransform: 'none',
+            background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+            boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+          }}
+          startIcon={<Typography>💬</Typography>}
         >
-          💬 View Comments
+          View Comments
         </Button>
       </Card>
 

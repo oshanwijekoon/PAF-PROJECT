@@ -63,7 +63,7 @@ function Sidebar() {
     >
       <Box textAlign="center" mb={2}>
         <Typography variant="h6" fontWeight="bold">
-          SkillChef
+        Menu
         </Typography>
       </Box>
       <Divider />
