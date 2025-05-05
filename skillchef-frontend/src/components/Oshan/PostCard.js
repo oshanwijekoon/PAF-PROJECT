@@ -33,6 +33,11 @@ import SpeedDialAction from '@mui/material/SpeedDialAction';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 
 function PostCard({ post, onDelete }) {
   const navigate = useNavigate();
@@ -44,6 +49,7 @@ function PostCard({ post, onDelete }) {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [selectedReaction, setSelectedReaction] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const reactions = [
     { icon: "❤️", name: "Love" },
@@ -104,6 +110,14 @@ function PostCard({ post, onDelete }) {
     setSelectedReaction(reaction);
   };
 
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   const imageUrl =
     post.mediaUrls?.length > 0
       ? `http://localhost:8080${post.mediaUrls[0]}`
@@ -150,21 +164,51 @@ function PostCard({ post, onDelete }) {
 
           {/* 🛠️ Icons (Edit/Delete/Share) */}
           <Stack direction="row" spacing={1}>
-            {user?.id === post.userId && (
-              <>
-                <IconButton color="primary" onClick={handleEdit}>
-                  <EditIcon />
-                </IconButton>
-                <IconButton color="error" onClick={() => setConfirmOpen(true)}>
-                  <DeleteIcon />
-                </IconButton>
-              </>
-            )}
             <Tooltip title="Share this post">
               <IconButton onClick={handleShare}>
                 <ShareIcon />
               </IconButton>
             </Tooltip>
+            {user?.id === post.userId && (
+              <>
+                <IconButton onClick={handleMenuOpen}>
+                  <MoreVertIcon />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                  transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                  anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                  PaperProps={{
+                    elevation: 3,
+                    sx: {
+                      borderRadius: 2,
+                      minWidth: 180,
+                    }
+                  }}
+                >
+                  <MenuItem onClick={() => {
+                    handleEdit();
+                    handleMenuClose();
+                  }}>
+                    <ListItemIcon>
+                      <EditIcon fontSize="small" sx={{ color: 'primary.main' }} />
+                    </ListItemIcon>
+                    <ListItemText primary="Edit Post" />
+                  </MenuItem>
+                  <MenuItem onClick={() => {
+                    setConfirmOpen(true);
+                    handleMenuClose();
+                  }} sx={{ color: 'error.main' }}>
+                    <ListItemIcon>
+                      <DeleteIcon fontSize="small" color="error" />
+                    </ListItemIcon>
+                    <ListItemText primary="Delete Post" />
+                  </MenuItem>
+                </Menu>
+              </>
+            )}
           </Stack>
         </Box>
 
