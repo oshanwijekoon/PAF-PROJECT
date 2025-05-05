@@ -98,7 +98,7 @@ function Home() {
               textTransform: 'none'
             }}
           >
-            Share Your Recipe
+            Create Your Post
           </Button>
         </Paper>
       </Fade>
@@ -297,7 +297,7 @@ function Home() {
                             }
                           }}
                         >
-                          View Recipe
+                          View Post
                         </Button>
                         <Stack direction="row" spacing={1}>
                           <IconButton size="small"><FavoriteBorderIcon /></IconButton>
