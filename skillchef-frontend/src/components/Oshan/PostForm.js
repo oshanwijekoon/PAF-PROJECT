@@ -55,11 +55,11 @@ function PostForm() {
   ];
 
   const difficultyLevels = [
-    "Beginner",
-    "Easy",
-    "Intermediate",
-    "Advanced",
-    "Expert"
+    "Home Cook",
+    "Cooking Enthusiast", 
+    "Culinary Student",
+    "Amateur Chef",
+    "Professional Chef"
   ];
 
   const handleChange = (e) => {
@@ -213,7 +213,7 @@ function PostForm() {
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 4 }}>
           <Stack spacing={4}>
             <TextField
-              label="Recipe Title"
+              label="Your Title"
               name="title"
               value={form.title}
               onChange={handleChange}
@@ -233,7 +233,7 @@ function PostForm() {
             />
 
             <TextField
-              label="Recipe Description"
+              label="Description"
               name="description"
               multiline
               rows={4}
@@ -366,7 +366,7 @@ function PostForm() {
               </TextField>
               <TextField
                 select
-                label="Difficulty"
+                label="Targeted Audience"
                 name="difficulty"
                 value={form.difficulty}
                 onChange={handleChange}
