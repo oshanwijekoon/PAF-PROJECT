@@ -91,7 +91,7 @@ function EditPost() {
   return (
     <Container maxWidth="sm" sx={{ mt: 4 }}>
       <Typography variant="h5" gutterBottom>
-        Edit Post ✏️
+        Edit Your Post...✏️
       </Typography>
 
       {/* ✅ Show old image if available */}
@@ -162,7 +162,7 @@ function EditPost() {
           )}
 
           <Button type="submit" variant="contained" color="primary">
-            Update Post
+            Update  Post
           </Button>
         </Stack>
       </form>
