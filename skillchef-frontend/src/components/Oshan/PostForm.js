@@ -254,7 +254,7 @@ function PostForm() {
             {/* Image Preview Section */}
             <Box>
               <Typography variant="h6" gutterBottom sx={{ color: '#FF6B6B' }}>
-                Recipe Photos
+                Upload Your Photos
               </Typography>
               <Box
                 sx={{
