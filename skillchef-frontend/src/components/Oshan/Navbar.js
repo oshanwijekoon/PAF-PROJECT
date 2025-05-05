@@ -56,7 +56,7 @@ function Navbar() {
               ml: 30,
             }}
           >
-            SkillChef 🍳
+            SkillChef 👨‍🍳
           </Typography>
 
           {/* 🔍 Search bar */}
