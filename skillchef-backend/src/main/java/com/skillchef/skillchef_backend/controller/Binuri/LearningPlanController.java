@@ -1,20 +1,28 @@
 package com.skillchef.skillchef_backend.controller.Binuri;
 
-import com.skillchef.skillchef_backend.dto.Binuri.LearningPlanDTO;
-import com.skillchef.skillchef_backend.model.Binuri.LearningPlan;
-import com.skillchef.skillchef_backend.service.Binuri.LearningPlanService;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.skillchef.skillchef_backend.dto.Binuri.LearningPlanDTO;
+import com.skillchef.skillchef_backend.model.Binuri.LearningPlan;
+import com.skillchef.skillchef_backend.service.Binuri.LearningPlanService;
 
 @RestController
 @RequestMapping("/api/plans")
@@ -43,7 +51,7 @@ public class LearningPlanController {
                 linkTo(methodOn(LearningPlanController.class).getAllPlans()).withSelfRel());
     }
 
-    // 🔵 Get specific plan
+    // 🔵 Get a specific plan
     @GetMapping("/{id}")
     public EntityModel<LearningPlan> getPlan(@PathVariable String id) {
         LearningPlan plan = learningPlanService.getPlanById(id)
