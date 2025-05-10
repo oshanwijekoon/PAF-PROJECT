@@ -67,7 +67,7 @@ public class LearningPlanController {
         return toModel(updated);
     }
 
-    // 🔵 Delete plan
+    // 🔵 Delete a learning plan
     @DeleteMapping("/{id}")
     public EntityModel<Map<String, String>> deletePlan(@PathVariable String id) {
         learningPlanService.deletePlan(id);
