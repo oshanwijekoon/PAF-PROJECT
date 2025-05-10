@@ -9,12 +9,16 @@ import {
   Alert,
   IconButton,
   Avatar,
+  Paper,
+  Fade,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
+import SendIcon from "@mui/icons-material/Send";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
+import EmojiPicker from "./EmojiPicker";
 
 function CommentSection({ postId, limit }) {
   const { user } = useContext(AuthContext);
@@ -116,99 +120,127 @@ function CommentSection({ postId, limit }) {
     }
   };
 
+  const handleEmojiSelect = (emoji) => {
+    if (editId) {
+      setEditText(editText + emoji);
+    } else {
+      setNewComment(newComment + emoji);
+    }
+  };
+
   return (
-    <Box>
-      <Typography variant="h6" mb={2}>
+    <Box sx={{ bgcolor: 'background.paper', borderRadius: 2, p: 3 }}>
+      <Typography variant="h6" mb={3} fontWeight="bold">
         Comments
       </Typography>
 
-      <Stack spacing={2} mb={3}>
-        {comments.length === 0 ? (
-          <Typography color="text.secondary">No comments yet.</Typography>
-        ) : (
-          comments.map((comment) => (
-            <Box
-              key={comment.id}
-              sx={{ p: 2, border: "1px solid #ccc", borderRadius: 2 }}
+      {/* Comment Input */}
+      <Paper elevation={2} sx={{ p: 2, mb: 3 }}>
+        <Stack direction="row" spacing={2} alignItems="flex-start">
+          <Avatar src={user?.profilePic} alt={user?.username} />
+          <Stack spacing={1} flexGrow={1}>
+            <TextField
+              fullWidth
+              multiline
+              rows={2}
+              placeholder="Write a comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              variant="outlined"
+              sx={{ '& fieldset': { borderRadius: 2 } }}
+            />
+            <Stack direction="row" justifyContent="space-between" alignItems="center">
+              <EmojiPicker onEmojiSelect={handleEmojiSelect} />
+              <Button
+                variant="contained"
+                endIcon={<SendIcon />}
+                onClick={handleAddComment}
+                disabled={!newComment.trim()}
+              >
+                Post
+              </Button>
+            </Stack>
+          </Stack>
+        </Stack>
+      </Paper>
+
+      {/* Comments List */}
+      <Stack spacing={2}>
+        {comments.map((comment) => (
+          <Fade in key={comment.id}>
+            <Paper
+              elevation={1}
+              sx={{
+                p: 2,
+                transition: '0.3s',
+                '&:hover': { transform: 'translateY(-2px)', boxShadow: 3 }
+              }}
             >
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <Avatar
-                  src={`http://localhost:8080${
-                    comment.userInfo?.profilePic || ""
-                  }`}
-                  alt={comment.userInfo?.username}
-                />
-                <Typography variant="subtitle2">
-                  {comment.userInfo?.username || comment.username}
-                </Typography>
-              </Stack>
-
-              {/* 🆕 Add createdAt below username */}
-              <Typography variant="caption" color="text.secondary">
-                {new Date(comment.createdAt).toLocaleString()}
-              </Typography>
-
-              {editId === comment.id ? (
-                <>
-                  <TextField
-                    value={editText}
-                    onChange={(e) => setEditText(e.target.value)}
-                    fullWidth
-                    multiline
-                    sx={{ mt: 1 }}
-                  />
-                  <Stack direction="row" spacing={1} mt={1}>
-                    <Button
-                      variant="contained"
-                      color="success"
-                      onClick={handleSaveEdit}
-                      startIcon={<SaveIcon />}
-                    >
-                      Save
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      color="warning"
-                      onClick={() => setEditId(null)}
-                    >
-                      Cancel
-                    </Button>
+              <Stack spacing={2}>
+                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    <Avatar
+                      src={comment.userInfo?.profilePic}
+                      alt={comment.username}
+                    />
+                    <Box>
+                      <Typography variant="subtitle1" fontWeight="bold">
+                        {comment.userInfo?.username || comment.username}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {new Date(comment.createdAt).toLocaleString()}
+                      </Typography>
+                    </Box>
                   </Stack>
-                </>
-              ) : (
-                <>
-                  <Typography variant="body2" mt={1}>
-                    {comment.text}
-                  </Typography>
                   {comment.userId === user?.id && (
-                    <Stack direction="row" spacing={1} mt={1}>
-                      <IconButton onClick={() => handleEdit(comment)}>
+                    <Stack direction="row" spacing={1}>
+                      <IconButton size="small" onClick={() => handleEdit(comment)}>
                         <EditIcon fontSize="small" />
                       </IconButton>
-                      <IconButton onClick={() => handleDelete(comment.id)}>
+                      <IconButton size="small" onClick={() => handleDelete(comment.id)}>
                         <DeleteIcon fontSize="small" color="error" />
                       </IconButton>
                     </Stack>
                   )}
-                </>
-              )}
-            </Box>
-          ))
-        )}
-      </Stack>
+                </Stack>
 
-      <Stack direction="row" spacing={2}>
-        <TextField
-          fullWidth
-          size="small"
-          variant="outlined"
-          placeholder="Write a comment..."
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-        />
-        <Button variant="contained" onClick={handleAddComment}>
-          Post
-        </Button>
+                {editId === comment.id ? (
+                  <Box sx={{ mt: 2 }}>
+                    <TextField
+                      fullWidth
+                      multiline
+                      value={editText}
+                      onChange={(e) => setEditText(e.target.value)}
+                      variant="outlined"
+                      sx={{ mb: 2 }}
+                    />
+                    <Stack direction="row" spacing={2}>
+                      <EmojiPicker onEmojiSelect={handleEmojiSelect} />
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSaveEdit}
+                        startIcon={<SaveIcon />}
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        onClick={() => setEditId(null)}
+                      >
+                        Cancel
+                      </Button>
+                    </Stack>
+                  </Box>
+                ) : (
+                  <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
+                    {comment.text}
+                  </Typography>
+                )}
+              </Stack>
+            </Paper>
+          </Fade>
+        ))}
       </Stack>
 
       <Snackbar
