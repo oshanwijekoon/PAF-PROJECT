@@ -59,7 +59,7 @@ public class LearningPlanController {
         return toModel(plan);
     }
 
-    // 🔵 Update plan
+    // 🔵 Update a learing plan
     @PutMapping("/{id}")
     public EntityModel<LearningPlan> updatePlan(@PathVariable String id, @RequestBody LearningPlanDTO dto) {
         LearningPlan updatedPlan = mapDtoToEntity(dto);
