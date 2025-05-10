@@ -24,7 +24,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Protected rrrRoutes with Layout */}
+          {/* Protected Routes with Layout */}
 
           <Route path="/home" element={<Home />} />
           <Route path="/create" element={<PostForm />} />
