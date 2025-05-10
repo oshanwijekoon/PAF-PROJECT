@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import PostCard from "../components/Oshan/PostCard";
-import CommentSection from "../components/Senura/CommentSection"; // 👈 Add this
-import { Container, CircularProgress, Box } from "@mui/material";
+import CommentSection from "../components/Senura/CommentSection";
+import { Container, CircularProgress, Box, Paper } from "@mui/material";
 import axios from "axios";
 
 function PostDetail() {
   const { id } = useParams();
+  const navigate = useNavigate(); // Add this
   const [post, setPost] = useState(null);
 
   useEffect(() => {
@@ -18,18 +19,21 @@ function PostDetail() {
 
   if (!post) {
     return (
-      <Container sx={{ mt: 4 }}>
+      <Container sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
         <CircularProgress />
       </Container>
     );
   }
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4 }}>
-      <PostCard post={post} onDelete={() => (window.location.href = "/home")} />
-      <Box sx={{ maxHeight: 400, overflowY: "auto", mt: 4 }}>
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      <Paper elevation={3} sx={{ mb: 4, overflow: 'hidden' }}>
+        <PostCard post={post} onDelete={() => navigate("/home")} />
+      </Paper>
+      
+      <Paper elevation={3} sx={{ mt: 4 }}>
         <CommentSection postId={post.id} showAllComments={true} />
-      </Box>
+      </Paper>
     </Container>
   );
 }
