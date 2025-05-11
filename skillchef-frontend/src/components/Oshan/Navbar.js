@@ -31,7 +31,7 @@ function Navbar() {
     <AppBar
       variant="permanent"
       sx={{
-        bgcolor: "rgb(199, 195, 194)", // Bright orange
+        bgcolor: "rgb(245, 109, 74)", // Bright orange
         color: "#000",
         px: 0,
       }}
