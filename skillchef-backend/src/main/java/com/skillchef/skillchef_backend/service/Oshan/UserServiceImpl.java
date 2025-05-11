@@ -105,4 +105,9 @@ public class UserServiceImpl implements UserService {
                 .limit(5) // limit suggestions
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Optional<User> getUserByEmail(String email) {
+        return userRepo.findByEmail(email);
+    }
 }
