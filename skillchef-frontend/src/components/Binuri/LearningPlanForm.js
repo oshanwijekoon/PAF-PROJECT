@@ -101,7 +101,7 @@ const LearningPlanForm = ({
       }}
     >
       <Typography variant="h5" mb={3} fontWeight={600}>
-        {editingPlan ? "✏️ Edit Learning Plan" : "➕ Create Learning Plan"}
+        {editingPlan ? "Learning Plan" : "Learning Plan"}
       </Typography>
 
       <Box component="form" onSubmit={handleSubmit}>
@@ -203,7 +203,7 @@ const LearningPlanForm = ({
               variant="contained"
               color="primary"
             >
-              {editingPlan ? "Update" : "Create"}
+              {editingPlan ? "Save" : "Save"}
             </Button>
           </Stack>
         </Stack>
