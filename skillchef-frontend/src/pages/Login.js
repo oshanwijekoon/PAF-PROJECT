@@ -6,16 +6,58 @@ import {
   Typography,
   Snackbar,
   Alert,
+  Divider,
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext"; // if using context
+import { AuthContext } from "../context/AuthContext";
+import { Paper, Box, Grid } from '@mui/material';
+import { auth } from '../config/firebase';
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import GoogleIcon from '@mui/icons-material/Google';
 
-import { Paper, Box, Grid } from '@mui/material';function Login() {
+function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext); // 👈 optional if you're using context
+  const { login } = useContext(AuthContext);
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({
+        prompt: 'select_account'
+      });
+      
+      const result = await signInWithPopup(auth, provider);
+      
+      if (!result.user.email) {
+        throw new Error("No email provided from Google");
+      }
+      
+      // Send Google user data to your backend
+      const res = await axios.post(
+        "http://localhost:8080/api/users/google-login",
+        {
+          email: result.user.email,
+          username: result.user.displayName || result.user.email.split('@')[0],
+          profilePic: result.user.photoURL || "/uploads/default.jpg",
+        }
+      );
+
+      const user = res.data;
+      localStorage.setItem("user", JSON.stringify(user));
+      login(user);
+      navigate("/home");
+    } catch (err) {
+      console.error("Google sign-in error:", err);
+      setError(
+        err.response?.data?.message || 
+        err.message || 
+        "Google sign-in failed. Please try again."
+      );
+    }
+  };
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -140,7 +182,29 @@ import { Paper, Box, Grid } from '@mui/material';function Login() {
           </Button>
         </form>
 
-        {/* 🔥 Toast for error */}
+        <Divider sx={{ my: 3 }}>OR</Divider>
+
+        <Button
+          fullWidth
+          variant="outlined"
+          onClick={handleGoogleSignIn}
+          startIcon={<GoogleIcon />}
+          sx={{
+            py: 1.5,
+            borderRadius: '12px',
+            borderColor: '#FF6B6B',
+            color: '#FF6B6B',
+            textTransform: 'none',
+            fontSize: '1.1rem',
+            '&:hover': {
+              borderColor: '#FF9F43',
+              backgroundColor: 'rgba(255,107,107,0.05)',
+            },
+          }}
+        >
+          Continue with Google
+        </Button>
+
         <Snackbar
           open={!!error}
           autoHideDuration={3000}

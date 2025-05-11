@@ -19,4 +19,5 @@ public interface UserService {
 
     // ✅ Suggest users to follow
     List<User> suggestUsersToFollow(String userId);
+    Optional<User> getUserByEmail(String email);
 }

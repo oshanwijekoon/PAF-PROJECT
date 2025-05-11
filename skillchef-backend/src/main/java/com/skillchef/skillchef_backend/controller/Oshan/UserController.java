@@ -7,6 +7,7 @@ import com.skillchef.skillchef_backend.model.Oshan.User;
 import com.skillchef.skillchef_backend.service.Oshan.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,7 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/users")
@@ -50,6 +54,38 @@ public class UserController {
                 .login(loginDto.getEmail(), loginDto.getPassword())
                 .<ResponseEntity<?>>map(user -> ResponseEntity.ok(new UserResponseDTO(user)))
                 .orElseGet(() -> ResponseEntity.status(401).body("Invalid credentials"));
+    }
+
+    @PostMapping("/google-login")
+    public ResponseEntity<?> googleLogin(@RequestBody Map<String, String> payload) {
+        try {
+            String email = payload.get("email");
+            if (email == null || email.isEmpty()) {
+                return ResponseEntity.badRequest().body("Email is required");
+            }
+            
+            Optional<User> existingUser = userService.getUserByEmail(email);
+            
+            if (existingUser.isPresent()) {
+                return ResponseEntity.ok(new UserResponseDTO(existingUser.get()));
+            }
+            
+            // Create new user from Google data
+            User newUser = new User();
+            newUser.setUsername(payload.get("username"));
+            newUser.setEmail(email);
+            newUser.setPassword(UUID.randomUUID().toString()); // random password
+            newUser.setProfilePic(payload.get("profilePic"));
+            newUser.setBio("");
+            newUser.setLocation("");
+            newUser.setJoinedAt(LocalDateTime.now().toString());
+            
+            User registered = userService.register(newUser);
+            return ResponseEntity.ok(new UserResponseDTO(registered));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error during Google login: " + e.getMessage());
+        }
     }
 
     @PutMapping(value = "/{id}", consumes = "multipart/form-data")
